@@ -1,1 +1,13 @@
+import pickle
 
+with open('./models/markov_model.pkl', 'rb') as f:
+    markov_model = pickle.load(f)
+
+# Example usage:
+def predict_next_symbol(current_symbol, model, top_n=3):
+    if current_symbol not in model:
+        return []
+    next_probs = sorted(model[current_symbol].items(), key=lambda x: x[1], reverse=True)
+    return next_probs[:top_n]
+
+print(predict_next_symbol("spiral", markov_model))
