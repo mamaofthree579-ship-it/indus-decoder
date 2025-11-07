@@ -1,140 +1,140 @@
 import streamlit as st
 import json
-import pandas as pd
-import plotly.express as px
-from utils.decoder_engine import decode_symbol_sequence, load_json, log
-from utils.decoder_engine import load_json
 import os
-import json
 import pandas as pd
+from utils.decoder_engine import decode_all_sequences, save_output, load_json, log
 
-OUTPUT_PATH = "./outputs/decoded_results.json"
-
-def load_json(file_path):
-    with open(file_path, 'r', encoding='utf-8') as f:
-        try:
-            return json.load(f)
-        except json.JSONDecodeError as e:
-            raise ValueError(f"Invalid JSON in {file_path}: {e}")
-
-# Load file
-content = load_json(OUTPUT_PATH)
-
-# Extract one sequence block for display
-first_key = list(content.keys())[0]
-decoded_sequences = content[first_key]["decoded_sequences"]
-
-# Flatten the first decoded sequence for visualization
-df = pd.DataFrame(decoded_sequences[0])
-
-print(df.head())
-
-OUTPUT_PATH = './outputs/decoded_results.json'
-
-if not os.path.exists(OUTPUT_PATH) or os.path.getsize(OUTPUT_PATH) == 0:
-    st.warning("Decoded results not found. Running decoder engine now...")
-    from utils.decoder_engine import decode_all_sequences, save_output
-    decoded_data = decode_all_sequences()
-    save_output(decoded_data, OUTPUT_PATH)
-else:
-    decoded_data = load_json(OUTPUT_PATH)
-    
-# === PAGE CONFIG ===
-st.set_page_config(
-    page_title="Indus Script Quantum Decoder",
-    layout="wide",
-    page_icon="🔮"
-)
-
-# === TITLE ===
-st.title("🔮 Indus Script Quantum Decoder")
-st.markdown("This interactive tool visualizes the reconstructed Indus symbol logic and resonance analysis framework.")
-
-# === LOAD CONFIG AND DATA ===
+# === PATHS ===
 CONFIG_PATH = './models/model_config.json'
-OUTPUT_PATH = './outputs/decoded_results.json'
 SEQUENCES_PATH = './data/sequences.json'
+OUTPUT_PATH = './outputs/decoded_results.json'
+LOG_PATH = './logs/decoding_log.txt'
 
-config = load_json(CONFIG_PATH)
-try:
-    decoded_data = load_json(OUTPUT_PATH)
-except FileNotFoundError:
-    decoded_data = {}
 
-# === SIDEBAR ===
-st.sidebar.header("⚙️ Control Panel")
+# === HELPER FUNCTIONS ===
+def load_config():
+    return load_json(CONFIG_PATH)
 
-option = st.sidebar.selectbox(
-    "Select View",
-    ["Decoded Sequences", "Pattern Analysis", "Symbol Explorer", "Upload & Decode"]
+
+def load_sequences():
+    return load_json(SEQUENCES_PATH)
+
+
+def save_uploaded_json(uploaded_file, save_path):
+    """Save uploaded file as JSON."""
+    content = json.load(uploaded_file)
+    with open(save_path, 'w', encoding='utf-8') as f:
+        json.dump(content, f, indent=2, ensure_ascii=False)
+    st.success(f"File saved to {save_path}")
+
+
+def convert_to_json(uploaded_file, save_path):
+    """Convert CSV or TXT to JSON if needed."""
+    if uploaded_file.name.endswith('.csv'):
+        df = pd.read_csv(uploaded_file)
+        json_data = df.to_dict(orient='records')
+    elif uploaded_file.name.endswith('.txt'):
+        lines = uploaded_file.read().decode('utf-8').splitlines()
+        json_data = {"lines": lines}
+    else:
+        st.error("Unsupported file type for conversion.")
+        return False
+
+    with open(save_path, 'w', encoding='utf-8') as f:
+        json.dump(json_data, f, indent=2, ensure_ascii=False)
+    st.success(f"Converted and saved to {save_path}")
+    return True
+
+
+def display_decoded_results():
+    if os.path.exists(OUTPUT_PATH):
+        with open(OUTPUT_PATH, 'r', encoding='utf-8') as f:
+            decoded = json.load(f)
+
+        for key, data in decoded.items():
+            st.subheader(f"🧩 Decoded Sequence: {key}")
+            st.json(data)
+
+            # Flatten for dataframe display
+            flattened = []
+            for seq in data['decoded_sequences']:
+                for sym in seq:
+                    flattened.append(sym)
+            df = pd.DataFrame(flattened)
+            st.dataframe(df)
+    else:
+        st.warning("No decoded results found yet.")
+
+
+def display_logs():
+    if os.path.exists(LOG_PATH):
+        with open(LOG_PATH, 'r', encoding='utf-8') as logf:
+            logs = logf.read()
+        st.text_area("🗒️ Log Output", logs, height=250)
+    else:
+        st.warning("No logs found yet.")
+
+
+# === STREAMLIT APP ===
+
+st.set_page_config(page_title="Indus Script Quantum Decoder", layout="wide")
+
+st.title("🔮 Indus Script Quantum Decoder")
+st.markdown("""
+This tool runs the **Indus Script Decoding Algorithm (IVC Algorithm)**  
+— a hybrid of pattern recognition, fractal harmonic mapping, and semantic resonance modeling.
+""")
+
+st.sidebar.header("⚙️ Controls")
+
+# --- File Upload Section ---
+st.sidebar.subheader("📤 Upload Data / Models")
+
+upload_option = st.sidebar.selectbox(
+    "Choose upload type:",
+    ["Upload Sequences", "Upload Model Config"]
 )
 
-# === VIEW 1: DECODED SEQUENCES ===
-if option == "Decoded Sequences":
-    st.subheader("🧩 Decoded Sequence Data")
-    if decoded_data:
-        for seq_id, content in decoded_data.items():
-            st.markdown(f"### Sequence {seq_id}")
-            df = pd.DataFrame(content['decoded_sequences'][0])
-            fig = px.bar(
-                df,
-                x='symbol',
-                y='combined_score',
-                hover_data=['semantic_strength', 'harmonic_resonance'],
-                title=f"Harmonic Resonance Map — {seq_id}"
-            )
-            st.plotly_chart(fig, use_container_width=True)
-            st.dataframe(df)
+uploaded_file = st.sidebar.file_uploader("Upload a file", type=["json", "csv", "txt"])
+
+if uploaded_file:
+    if upload_option == "Upload Sequences":
+        target_path = SEQUENCES_PATH
     else:
-        st.warning("No decoded data found. Run the decoder first.")
+        target_path = CONFIG_PATH
 
-# === VIEW 2: PATTERN ANALYSIS ===
-elif option == "Pattern Analysis":
-    st.subheader("🔁 Pattern Recognition Results")
-    if decoded_data:
-        pattern_summary = []
-        for seq_id, content in decoded_data.items():
-            pattern_summary.append({
-                "Sequence ID": seq_id,
-                "Patterns Found": len(content['patterns_detected'])
-            })
-        st.dataframe(pd.DataFrame(pattern_summary))
+    if uploaded_file.name.endswith('.json'):
+        save_uploaded_json(uploaded_file, target_path)
     else:
-        st.warning("No pattern data found.")
+        convert_to_json(uploaded_file, target_path)
 
-# === VIEW 3: SYMBOL EXPLORER ===
-elif option == "Symbol Explorer":
-    st.subheader("🧠 Symbol Semantic and Resonance Explorer")
-    symbol_input = st.text_input("Enter a symbol or short sequence (comma-separated):", "Spiral,Square")
-    if st.button("Decode Symbol Sequence"):
-        symbols = [s.strip() for s in symbol_input.split(",")]
-        result = decode_symbol_sequence(symbols)
-        df = pd.DataFrame(result)
-        st.dataframe(df)
-        fig = px.line(df, x='symbol', y='combined_score', markers=True, title="Symbol Energy Profile")
-        st.plotly_chart(fig, use_container_width=True)
-        avg_score = df['combined_score'].mean()
-        st.success(f"Average combined resonance score: **{avg_score:.3f}**")
+# --- Run Decoding ---
+if st.sidebar.button("🚀 Run Decoding Process"):
+    st.info("Decoding process started...")
+    results = decode_all_sequences()
+    save_output(results, OUTPUT_PATH)
+    st.success("Decoding complete! Results saved.")
+    st.balloons()
 
-# === VIEW 4: UPLOAD & DECODE ===
-elif option == "Upload & Decode":
-    st.subheader("📤 Upload Your Own Sequence JSON")
-    uploaded_file = st.file_uploader("Upload a JSON file containing new symbol sequences", type=['json'])
-    if uploaded_file:
-        data = json.load(uploaded_file)
-        st.json(data)
-        if st.button("Run Decoding"):
-            st.info("Running decoding process...")
-            results = {}
-            for key, seq in data.items():
-                sequences = seq.get('symbol_sequences', [])
-                decoded = [decode_symbol_sequence(s) for s in sequences]
-                results[key] = {"decoded_sequences": decoded}
-            st.success("Decoding complete! Displaying results:")
-            st.json(results)
-            df = pd.DataFrame(results[list(results.keys())[0]]['decoded_sequences'][0])
-            st.dataframe(df)
+# --- Tabs for viewing results ---
+tab1, tab2, tab3 = st.tabs(["📊 Decoded Results", "⚙️ Config & Data", "🗒️ Logs"])
 
-# === FOOTER ===
+with tab1:
+    st.header("Decoded Results")
+    display_decoded_results()
+
+with tab2:
+    st.header("Current Configuration")
+    st.json(load_config())
+    st.header("Current Symbol Sequences")
+    st.json(load_sequences())
+
+with tab3:
+    st.header("System Logs")
+    display_logs()
+    if st.button("🔁 Refresh Logs"):
+        st.experimental_rerun()
+
+# --- Footer ---
 st.markdown("---")
-st.caption("Developed as part of the Indus Script Quantum-Harmonic Reconstruction Project 🕉️")
+st.caption("Developed as part of the **Indus Quantum Linguistic Reconstruction Project** 🧬")
