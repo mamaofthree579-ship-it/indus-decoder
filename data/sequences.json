@@ -1,1 +1,59 @@
-
+{
+  "metadata": {
+    "project": "Indus_Script_Decoding",
+    "version": "1.0",
+    "author": "Collaborative Research Framework",
+    "description": "Reconstructed Indus symbol sequences and hypothesized meanings derived through fractal, frequency, and contextual linguistic modeling."
+  },
+  "sequences": [
+    {
+      "id": "SEQ001",
+      "symbols": ["Fish", "Jar", "Double_Wavy_Line"],
+      "meaning_hypothesis": "Consciousness contained within the flow of energy; awareness encoded in vibrational field.",
+      "field_type": "Quantum/Scalar/Resonance",
+      "notes": "This appears to link with brainwave resonance and water symbolism; parallels with Olmec and Vedic symbology."
+    },
+    {
+      "id": "SEQ002",
+      "symbols": ["Spiral_Arrow", "Dot", "Square"],
+      "meaning_hypothesis": "Directional energy compression; movement of matter through spacetime vortex toward stability.",
+      "field_type": "Rotational/Gravity/Field_Alignment",
+      "notes": "Represents dynamic transition between states; found near ceremonial sites oriented to solstitial alignments."
+    },
+    {
+      "id": "SEQ003",
+      "symbols": ["Nested_Squares", "Step", "Lattice"],
+      "meaning_hypothesis": "Dimensional layering; structured ascent through frequency bands or consciousness stages.",
+      "field_type": "Scalar_Harmonic/Geometric",
+      "notes": "Echoes of the Djed pillar; possibly used in harmonic resonance tuning rituals."
+    },
+    {
+      "id": "SEQ004",
+      "symbols": ["Dual_Circles", "Dot_Circle", "Knot_Loop"],
+      "meaning_hypothesis": "Dual polarity balancing; entanglement and harmonization of paired energetic systems.",
+      "field_type": "Electro_Magnetic/Entanglement",
+      "notes": "Potentially a teaching or encoding of binary charge systems; cross-referenced with Yin-Yang and quipu knot logic."
+    },
+    {
+      "id": "SEQ005",
+      "symbols": ["Triangle_In_Square", "Arrow", "Cross_Spiral"],
+      "meaning_hypothesis": "Quantum tunneling harmony; nodal interface of linear and cyclical spacetime behavior.",
+      "field_type": "Quantum_Field/Cosmic_Interface",
+      "notes": "Correlates with ideas of black hole/white hole transitions and singularity coupling."
+    },
+    {
+      "id": "SEQ006",
+      "symbols": ["Square", "Square", "Circle"],
+      "meaning_hypothesis": "Containment and observation of consciousness; holographic reflection of awareness layers.",
+      "field_type": "Consciousness/Observer_Effect",
+      "notes": "Parallels seen in mummy head wrappings and geometric mandalas — possible representation of observer-field coupling."
+    },
+    {
+      "id": "SEQ007",
+      "symbols": ["Lattice", "Step", "Spiral_Arrow"],
+      "meaning_hypothesis": "Harmonic ascent through structured resonance grid; movement of energy through the world lattice.",
+      "field_type": "Scalar/Grid/Resonance",
+      "notes": "Common across ancient civilizations; reflects a planetary or cosmic energy network model."
+    }
+  ]
+}
