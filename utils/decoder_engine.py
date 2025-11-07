@@ -127,7 +127,15 @@ def decode_all_sequences():
     pattern_params = config['algorithm']['pattern_recognition']['parameters']
 
     for key, seq in sequences.items():
-        sequence_list = seq.get('symbol_sequences', [])
+        if "symbol_sequences" not in seq:
+            log(f"Warning: No symbol_sequences in {key}", level="WARN")
+            continue
+
+        sequence_list = seq["symbol_sequences"]
+        if not isinstance(sequence_list, list):
+            log(f"Error: symbol_sequences for {key} is not a list", level="ERROR")
+            continue
+
         patterns = detect_patterns(sequence_list, pattern_params)
         decoded_seq = [decode_symbol_sequence(s) for s in sequence_list]
         all_decoded[key] = {
@@ -135,6 +143,7 @@ def decode_all_sequences():
             "decoded_sequences": decoded_seq
         }
         log(f"Decoded sequence {key} with {len(patterns)} patterns.")
+
     return all_decoded
 
 
