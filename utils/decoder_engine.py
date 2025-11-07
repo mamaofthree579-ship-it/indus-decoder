@@ -7,9 +7,15 @@ from statistics import mean
 # === LOAD CONFIG AND DATA ===
 
 def load_json(file_path):
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(f"File not found: {file_path}")
+    if os.path.getsize(file_path) == 0:
+        raise ValueError(f"File {file_path} is empty — run the decoding engine first.")
     with open(file_path, 'r', encoding='utf-8') as f:
-        return json.load(f)
-
+        try:
+            return json.load(f)
+        except json.JSONDecodeError as e:
+            raise ValueError(f"Invalid JSON in {file_path}: {e}")
 CONFIG_PATH = './models/model_config.json'
 SEQUENCES_PATH = './data/sequences.json'
 
