@@ -74,5 +74,35 @@
   "Diamond": {
     "meaning": "Crystalline formation / Structured energy",
     "field": "Piezoelectric / Crystal Field"
+  },
+  "spiral_arrow": {
+    "meaning": "Energy flow initiation and directional control",
+    "field_type": "Vortex / Scalar",
+    "function": "Activates torsion or rotational energy fields"
+  },
+  "nested_square": {
+    "meaning": "Dimensional layering and compression",
+    "field_type": "Gravity / Scalar",
+    "function": "Encodes spatial compression and geometric containment"
+  },
+  "lattice": {
+    "meaning": "Field stabilization and network linkage",
+    "field_type": "Resonant grid / Scalar matrix",
+    "function": "Stabilizes harmonic fields between nodes"
+  },
+  "dual_circle": {
+    "meaning": "Dual polarity and charge balancing",
+    "field_type": "Electromagnetic / Scalar coupling",
+    "function": "Maintains field symmetry and coherence"
+  },
+  "dot_circle": {
+    "meaning": "Point of consciousness focus",
+    "field_type": "Scalar resonance center",
+    "function": "Acts as central point of field collapse or awareness"
+  },
+  "loop": {
+    "meaning": "Information entanglement and resonance link",
+    "field_type": "Quantum coupling",
+    "function": "Connects entangled energetic nodes or minds"
   }
 }
