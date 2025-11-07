@@ -3,7 +3,19 @@ import json
 import pandas as pd
 import plotly.express as px
 from utils.decoder_engine import decode_symbol_sequence, load_json, log
+from utils.decoder_engine import load_json
+import os
 
+OUTPUT_PATH = './outputs/decoded_results.json'
+
+if not os.path.exists(OUTPUT_PATH) or os.path.getsize(OUTPUT_PATH) == 0:
+    st.warning("Decoded results not found. Running decoder engine now...")
+    from utils.decoder_engine import decode_all_sequences, save_output
+    decoded_data = decode_all_sequences()
+    save_output(decoded_data, OUTPUT_PATH)
+else:
+    decoded_data = load_json(OUTPUT_PATH)
+    
 # === PAGE CONFIG ===
 st.set_page_config(
     page_title="Indus Script Quantum Decoder",
