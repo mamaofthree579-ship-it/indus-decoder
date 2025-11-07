@@ -1,46 +1,105 @@
 import streamlit as st
-from src.data_processing import normalize_symbol_image
-from src.semantic_mapping import predict_meanings
-from src.visualization import plot_adjacency_graph, show_interface_diagram
-import json, os
-st.set_page_config(page_title="Indus Decoder (Prototype)", layout="wide")
+import json
+import pandas as pd
+import plotly.express as px
+from utils.decoder_engine import decode_symbol_sequence, load_json, log
 
-st.title("Indus Decoder — Prototype Streamlit App")
-st.markdown("Upload an Indus symbol image or choose an example to see decoded suggestions, adjacency graphs, and interface visuals. This is an open-source starter — extend the models in `src/`.")
+# === PAGE CONFIG ===
+st.set_page_config(
+    page_title="Indus Script Quantum Decoder",
+    layout="wide",
+    page_icon="🔮"
+)
 
-# Load dictionary
-DATA_DIR = os.path.join(os.path.dirname(__file__),"data")
-with open(os.path.join(DATA_DIR,"dictionary.json"),"r",encoding="utf-8") as f:
-    dictionary = json.load(f)
+# === TITLE ===
+st.title("🔮 Indus Script Quantum Decoder")
+st.markdown("This interactive tool visualizes the reconstructed Indus symbol logic and resonance analysis framework.")
 
-col1, col2 = st.columns([1,2])
+# === LOAD CONFIG AND DATA ===
+CONFIG_PATH = './models/model_config.json'
+OUTPUT_PATH = './outputs/decoded_results.json'
+SEQUENCES_PATH = './data/sequences.json'
 
-with col1:
-    st.header("Input")
-    uploaded = st.file_uploader("Upload a symbol image (PNG/SVG/JPEG)", type=["png","jpg","jpeg"])
-    example = st.selectbox("Or select an example symbol", ["None"] + list(dictionary.keys()))
-    if st.button("Decode"):
-        if uploaded is None and example=="None":
-            st.warning("Upload an image or select an example symbol.")
-        else:
-            if uploaded:
-                img_bytes = uploaded.read()
-                feat = normalize_symbol_image(img_bytes)
-                label, scores = predict_meanings(feat)
-                st.success(f"Top suggestion: **{label}**")
-                st.write("Top candidates (score):")
-                st.write(scores)
-            else:
-                # example selected
-                st.info(f"Showing dictionary entry for **{example}**")
-                st.write(dictionary[example])
+config = load_json(CONFIG_PATH)
+try:
+    decoded_data = load_json(OUTPUT_PATH)
+except FileNotFoundError:
+    decoded_data = {}
 
-with col2:
-    st.header("Visualizations")
-    st.subheader("Adjacency Graph (prototype)")
-    plot_adjacency_graph()
-    st.subheader("Quantum-Holographic Interface (prototype)")
-    show_interface_diagram()
+# === SIDEBAR ===
+st.sidebar.header("⚙️ Control Panel")
 
+option = st.sidebar.selectbox(
+    "Select View",
+    ["Decoded Sequences", "Pattern Analysis", "Symbol Explorer", "Upload & Decode"]
+)
+
+# === VIEW 1: DECODED SEQUENCES ===
+if option == "Decoded Sequences":
+    st.subheader("🧩 Decoded Sequence Data")
+    if decoded_data:
+        for seq_id, content in decoded_data.items():
+            st.markdown(f"### Sequence {seq_id}")
+            df = pd.DataFrame(content['decoded_sequences'][0])
+            fig = px.bar(
+                df,
+                x='symbol',
+                y='combined_score',
+                hover_data=['semantic_strength', 'harmonic_resonance'],
+                title=f"Harmonic Resonance Map — {seq_id}"
+            )
+            st.plotly_chart(fig, use_container_width=True)
+            st.dataframe(df)
+    else:
+        st.warning("No decoded data found. Run the decoder first.")
+
+# === VIEW 2: PATTERN ANALYSIS ===
+elif option == "Pattern Analysis":
+    st.subheader("🔁 Pattern Recognition Results")
+    if decoded_data:
+        pattern_summary = []
+        for seq_id, content in decoded_data.items():
+            pattern_summary.append({
+                "Sequence ID": seq_id,
+                "Patterns Found": len(content['patterns_detected'])
+            })
+        st.dataframe(pd.DataFrame(pattern_summary))
+    else:
+        st.warning("No pattern data found.")
+
+# === VIEW 3: SYMBOL EXPLORER ===
+elif option == "Symbol Explorer":
+    st.subheader("🧠 Symbol Semantic and Resonance Explorer")
+    symbol_input = st.text_input("Enter a symbol or short sequence (comma-separated):", "Spiral,Square")
+    if st.button("Decode Symbol Sequence"):
+        symbols = [s.strip() for s in symbol_input.split(",")]
+        result = decode_symbol_sequence(symbols)
+        df = pd.DataFrame(result)
+        st.dataframe(df)
+        fig = px.line(df, x='symbol', y='combined_score', markers=True, title="Symbol Energy Profile")
+        st.plotly_chart(fig, use_container_width=True)
+        avg_score = df['combined_score'].mean()
+        st.success(f"Average combined resonance score: **{avg_score:.3f}**")
+
+# === VIEW 4: UPLOAD & DECODE ===
+elif option == "Upload & Decode":
+    st.subheader("📤 Upload Your Own Sequence JSON")
+    uploaded_file = st.file_uploader("Upload a JSON file containing new symbol sequences", type=['json'])
+    if uploaded_file:
+        data = json.load(uploaded_file)
+        st.json(data)
+        if st.button("Run Decoding"):
+            st.info("Running decoding process...")
+            results = {}
+            for key, seq in data.items():
+                sequences = seq.get('symbol_sequences', [])
+                decoded = [decode_symbol_sequence(s) for s in sequences]
+                results[key] = {"decoded_sequences": decoded}
+            st.success("Decoding complete! Displaying results:")
+            st.json(results)
+            df = pd.DataFrame(results[list(results.keys())[0]]['decoded_sequences'][0])
+            st.dataframe(df)
+
+# === FOOTER ===
 st.markdown("---")
-st.caption("Prototype app generated from the Indus decoding project. Extend `src/` modules to add real models and datasets.")
+st.caption("Developed as part of the Indus Script Quantum-Harmonic Reconstruction Project 🕉️")
