@@ -120,7 +120,6 @@ def decode_symbol_sequence(sequence):
         })
     return meanings
 
-
 def decode_all_sequences():
     """Run the full decoding process."""
     all_decoded = {}
@@ -145,7 +144,6 @@ def decode_all_sequences():
         log(f"Decoded sequence {key} with {len(patterns)} patterns.")
 
     return all_decoded
-
 
 # === OUTPUT HANDLER ===
 
