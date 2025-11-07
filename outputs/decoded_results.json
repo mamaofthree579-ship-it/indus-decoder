@@ -1,4 +1,8 @@
 {
-  "status": "placeholder",
-  "message": "Run decoder_engine.py to generate full decoded results"
+  "sequence_001": {
+    "patterns_detected": [["spiral", "arrow"]],
+    "decoded_sequences": [
+      [{"symbol": "spiral"}, {"symbol": "arrow"}]
+    ]
+  }
 }
