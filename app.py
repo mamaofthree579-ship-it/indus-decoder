@@ -5,6 +5,29 @@ import plotly.express as px
 from utils.decoder_engine import decode_symbol_sequence, load_json, log
 from utils.decoder_engine import load_json
 import os
+import json
+import pandas as pd
+
+OUTPUT_PATH = "./outputs/decoded_results.json"
+
+def load_json(file_path):
+    with open(file_path, 'r', encoding='utf-8') as f:
+        try:
+            return json.load(f)
+        except json.JSONDecodeError as e:
+            raise ValueError(f"Invalid JSON in {file_path}: {e}")
+
+# Load file
+content = load_json(OUTPUT_PATH)
+
+# Extract one sequence block for display
+first_key = list(content.keys())[0]
+decoded_sequences = content[first_key]["decoded_sequences"]
+
+# Flatten the first decoded sequence for visualization
+df = pd.DataFrame(decoded_sequences[0])
+
+print(df.head())
 
 OUTPUT_PATH = './outputs/decoded_results.json'
 
