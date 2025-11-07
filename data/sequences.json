@@ -1,3 +1,12 @@
+for key, seq in sequences.items():
+    sequence_list = seq if isinstance(seq, list) else seq.get('symbol_sequences', [])
+    patterns = detect_patterns(sequence_list, pattern_params)
+    decoded_seq = [decode_symbol_sequence(s) for s in sequence_list]
+    all_decoded[key] = {
+        "patterns_detected": patterns,
+        "decoded_sequences": decoded_seq
+    }
+    log(f"Decoded sequence {key} with {len(patterns)} patterns.")
 {
   "metadata": {
     "project": "Indus_Script_Decoding",
