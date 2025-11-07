@@ -1,0 +1,66 @@
+{
+  "model": {
+    "name": "IndusQuantumDecoder",
+    "version": "1.0",
+    "description": "Algorithmic framework for decoding recursive, fractal, and linguistic patterns in the Indus Script.",
+    "created_by": "Collaborative Research Framework"
+  },
+  "input_data": {
+    "symbol_sequences": "./data/sequences.json",
+    "pattern_sources": [
+      "frequency_analysis",
+      "spatial_geometry",
+      "context_free_grammar",
+      "quantum_field_mapping"
+    ]
+  },
+  "algorithm": {
+    "pattern_recognition": {
+      "method": "hybrid_frequency_fractal",
+      "parameters": {
+        "window_size": 3,
+        "min_pattern_repeats": 2,
+        "max_recursion_depth": 5,
+        "similarity_threshold": 0.82
+      }
+    },
+    "semantic_mapping": {
+      "method": "contextual_embedding",
+      "parameters": {
+        "vector_space_dimensions": 512,
+        "field_bias_weights": {
+          "Quantum": 1.2,
+          "Scalar": 1.0,
+          "Consciousness": 1.5,
+          "Geometric": 0.9
+        }
+      }
+    },
+    "resonance_model": {
+      "method": "harmonic_resonance_fit",
+      "parameters": {
+        "harmonic_bands": [7.83, 14.3, 20.8],
+        "fractal_depth_weight": 0.33,
+        "symmetry_coupling_factor": 0.67
+      }
+    },
+    "validation": {
+      "cross_reference": true,
+      "comparison_sources": [
+        "Vedic_symbols",
+        "Olmec_glyphs",
+        "Sumerian_proto_cuneiform"
+      ]
+    }
+  },
+  "output": {
+    "decoded_sequences_file": "./outputs/decoded_results.json",
+    "visualizations": "./outputs/visuals/",
+    "report_format": "markdown"
+  },
+  "logging": {
+    "enabled": true,
+    "level": "INFO",
+    "file": "./logs/decoding_log.txt"
+  }
+}
