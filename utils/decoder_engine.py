@@ -95,10 +95,12 @@ def semantic_map(symbol, weights):
 
 
 def harmonic_resonance(symbol_group, resonance_config):
-    """Compute harmonic stability of symbol group."""
-    harmonics = resonance_config['harmonic_bands']
-    depth_weight = resonance_config['fractal_depth_weight']
-    symmetry_factor = resonance_config['symmetry_coupling_factor']
+    """Compute harmonic stability of a symbol group."""
+    params = resonance_config.get('parameters', {})
+    harmonics = params.get('harmonic_bands', [1])
+    depth_weight = params.get('fractal_depth_weight', 1.0)
+    symmetry_factor = params.get('symmetry_coupling_factor', 1.0)
+
     freq_sum = mean([math.sin(h * len(symbol_group)) for h in harmonics])
     return abs(freq_sum * depth_weight * symmetry_factor)
 
